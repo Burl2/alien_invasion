@@ -1,8 +1,9 @@
 import pygame
+import func.game_functions as gf
 from cfg.settings import Settings
 from entity.ship import Ship
-import func.game_functions as gf
 from pygame.sprite import Group
+from entity.game_stats import GameStats
 
 
 def run_game():
@@ -14,15 +15,19 @@ def run_game():
     ship = Ship(ai_settings, screen)
     bullets = Group()
     aliens = Group()
+    stats = GameStats(ai_settings)
 
     gf.create_fleet(ai_settings, screen, aliens, ship)
 
     # bg_color = (230, 230, 230)
     while True:
         gf.check_events(ai_settings, screen, ship, bullets)
-        ship.update()
-        gf.update_bullets(bullets)
-        gf.update_aliens(ai_settings, aliens)
+
+        if stats.game_active:
+            ship.update()
+            gf.update_bullets(ai_settings, screen, ship, bullets, aliens)
+            gf.update_aliens(ai_settings, stats, screen, ship, aliens, bullets)
+
         gf.update_screen(ai_settings, screen, ship, bullets, aliens)
 
 
